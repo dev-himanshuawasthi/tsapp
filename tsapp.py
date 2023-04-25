@@ -5,7 +5,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 import lightgbm as lgb
 
 # Load data from CSV file
-data = pd.read_csv('/Users/himanshuawasthi/projects/customer_default/CaseStudy_FraudIdentification.csv')
+data = pd.read_csv('CaseStudy_FraudIdentification.csv')
 
 # Separate features and target variable
 X = data.drop('default', axis=1)
