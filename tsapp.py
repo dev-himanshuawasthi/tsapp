@@ -8,8 +8,6 @@ import lightgbm as lgb
 data = pd.read_csv('CaseStudy_FraudIdentification.csv')
 
 # Separate features and target variable
-X = data.drop('default', axis=1)
-y = data['default']
 X = data.drop('default payment next month', axis=1)
 y = data['default payment next month']
 
