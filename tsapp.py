@@ -7,9 +7,14 @@ import lightgbm as lgb
 # Load data from CSV file
 data = pd.read_csv('CaseStudy_FraudIdentification.csv')
 
+# Convert categorical variables to numeric using one-hot encoding
+data = pd.get_dummies(data, columns=['EDUCATION', 'MARRIAGE','Gender'], prefix=['edu', 'mar','gen'])
+
+
 # Separate features and target variable
 X = data.drop('default payment next month', axis=1)
 y = data['default payment next month']
+
 
 # Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
