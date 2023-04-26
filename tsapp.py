@@ -3,18 +3,18 @@ import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 import lightgbm as lgb
+import altair as alt
 
 # Load data from CSV file
-data = pd.read_csv('CaseStudy_FraudIdentification.csv')
+df = pd.read_csv('CaseStudy_FraudIdentification.csv')
+
 
 # Convert categorical variables to numeric using one-hot encoding
-data = pd.get_dummies(data, columns=['EDUCATION', 'MARRIAGE','Gender'], prefix=['edu', 'mar','gen'])
-
+data = pd.get_dummies(df, columns=['EDUCATION', 'MARRIAGE','Gender'], prefix=['edu', 'mar','gen'])
 
 # Separate features and target variable
 X = data.drop('default payment next month', axis=1)
 y = data['default payment next month']
-
 
 # Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -49,6 +49,19 @@ def dashboard():
     st.write('Accuracy:', accuracy)
     st.write('Precision:', precision)
     st.write('Recall:', recall)
+
+    # Allow user to input test data
+    st.write('## Test Data')
+    st.write('Enter values for the following features:')
+    test_data = {}
+    for col in X.columns:
+        test_data[col] = st.number_input(col, value=0, step=1)
+    test_data = pd.DataFrame(test_data, index=[0])
+    
+    # Show model prediction for test data
+    if st.button('Predict'):
+        prediction = lgb_model.predict(test_data)
+        st.write('Prediction:', prediction[0])
 
 # Run dashboard
 if __name__ == '__main__':
