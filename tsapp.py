@@ -49,18 +49,38 @@ def dashboard():
     st.write('Precision:', precision)
     st.write('Recall:', recall)
 
-    # Allow user to input test data
-    st.write('## Test Data')
-    st.write('Enter values for the following features:')
-    test_data = {}
-    for col in X.columns:
-        test_data[col] = st.number_input(col, value=0, step=1)
-    test_data = pd.DataFrame(test_data, index=[0])
-    
-    # Show model prediction for test data
-    if st.button('Predict'):
-        prediction = lgb_model.predict(test_data)
-        st.write('Prediction:', prediction[0])
+        # Display prediction form
+    st.write('## Prediction')
+    form = st.form(key='prediction_form')
+    limit_bal = form.number_input('Limit Balance', min_value=0, max_value=1000000, step=1000)
+    age = form.number_input('Age', min_value=18, max_value=100, step=1)
+    pay_1 = form.selectbox('Payment Status (September)', options=[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8])
+    pay_2 = form.selectbox('Payment Status (August)', options=[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8])
+    pay_3 = form.selectbox('Payment Status (July)', options=[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8])
+    bill_amt1 = form.number_input('Bill Amount (September)', min_value=0, max_value=1000000, step=1000)
+    bill_amt2 = form.number_input('Bill Amount (August)', min_value=0, max_value=1000000, step=1000)
+    bill_amt3 = form.number_input('Bill Amount (July)', min_value=0, max_value=1000000, step=1000)
+    form_submit = form.form_submit_button('Predict')
+
+    # Execute prediction if form is submitted
+    if form_submit:
+        input_data = pd.DataFrame({
+            'LIMIT_BAL': [limit_bal],
+            'AGE': [age],
+            'PAY_1': [pay_1],
+            'PAY_2': [pay_2],
+            'PAY_3': [pay_3],
+            'BILL_AMT1': [bill_amt1],
+            'BILL_AMT2': [bill_amt2],
+            'BILL_AMT3': [bill_amt3]
+        })
+
+        prediction = lgb_model.predict(input_data)[0]
+
+        if prediction == 0:
+            st.write('Prediction: No Default')
+        else:
+            st.write('Prediction: Default')
 
 # Run dashboard
 if __name__ == '__main__':
